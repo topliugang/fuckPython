@@ -46,14 +46,15 @@ filename = '3v%d'
 multithreading instance
 """
 class Downloader(threading.Thread):
-	def __init__(self, link, folder, filename):
+	def __init__(self, link, path, folder, filename):
 		threading.Thread.__init__(self)
 		self.link = link
+		self.path = path
 		self.folder = folder
 		self.filename = filename
 		return
 
-	def downdown(self, link, folder, filename):
+	def downdown(self, link, path, folder, filename):
 		link = link+folder+'/'+filename
 		headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'}
 		cookies = {'xa':'xa'}
@@ -63,33 +64,29 @@ class Downloader(threading.Thread):
 		 cookies = cookies, hooks=dict(response=print_url))
 		print 'download completed'+link
 		print
-		fullname = os.path.join(folder, filename+'.mp4')
+		fullname = os.path.join(path, folder, filename+'.mp4')
 		with open(fullname, 'wb') as downfile:
 			downfile.write(downreq.content)
 			downfile.close()
 
 	def run(self):
-		self.downdown(self.link, self.folder, self.filename)
+		self.downdown(self.link, self.path, self.folder, self.filename)
 
 
-def fuck():
-	link = 'http://9.syasn.com/'
-	folder = 'p'
-	filename = 'p%d'
-	start = 1
-	end = 650
-	count = 10
+def fuck(link, folder, filename, start, end, count, path):
+	
 	progress = start
 
 	downloaders = []
 
 	#folder
-	if not os.path.isdir(folder):
-		os.mkdir(folder)
+	fullpath = os.path.join(path, folder)
+	if not os.path.isdir(fullpath):
+		os.mkdir(fullpath)
 	
 	#init
 	for i in range(start, start + count):
-		downloader = Downloader(link, folder, filename%progress)
+		downloader = Downloader(link, path, folder, filename%progress)
 		progress = progress + 1
 		downloader.start()
 		downloaders.append(downloader)
@@ -98,15 +95,51 @@ def fuck():
 		for downloader in downloaders:
 			if not downloader.isAlive():
 				downloaders.remove(downloader)
-				downloader = Downloader(link, folder, filename%progress)
+				downloader = Downloader(link, path, folder, filename%progress)
 				progress = progress + 1
 				downloader.start()
 				downloaders.append(downloader)
 
+#check from start to end
+#like 1 -- 116
+def checkanddown(link, start, end, path, folder, filename):
+	for i in range(start, end+1):
+		name = filename%i+'.mp4'
+		fullpath = os.path.join(path, folder, name)
+		if not os.path.exists(fullpath):
+			print name, 'not exists'
+			downloader = Downloader(link, path, folder, filename%i)
+			downloader.start()
+
+def check(link, start, end, path, folder, filename):
+	for i in range(start, end+1):
+		name = filename%i+'.mp4'
+		fullpath = os.path.join(path, folder, name)
+		if not os.path.exists(fullpath):
+			print name, 'not exists'
+			#downloader = Downloader(link, path, folder, filename%i)
+			#downloader.start()
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
 
-	fuck()
+	link = 'http://9.syasn.com/'
+	folder = '3v'
+	filename = '3v%d'
+	start = 1
+	end = 31
+	count = 10
+	path = 'c:\\develop\\fuck'
+
+	#fuck(link, folder, filename, start, end, count, path)
+	checkanddown(link, start, end, path, folder, filename)
+	#check(link, start, end, path, folder, filename)
 
 	
 
