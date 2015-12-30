@@ -1,4 +1,4 @@
-﻿ # -*- coding:utf-8 -*- 
+ # -*- coding:utf-8 -*- 
 import requests
 from bs4 import BeautifulSoup
 import threading
@@ -130,10 +130,10 @@ def check(link, start, end, path, folder, filename):
 if __name__ == "__main__":
 
 	link = 'http://9.syasn.com/'
-	folder = '3v'
-	filename = '3v%d'
+	folder = 'rs'
+	filename = 'rs%d'
 	start = 1
-	end = 31
+	end = 117
 	count = 10
 	path = 'c:\\develop\\fuck'
 

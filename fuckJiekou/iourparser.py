@@ -2,22 +2,20 @@
 import requests
 from bs4 import BeautifulSoup
 
-url = 'http://javpop.com/category/censored'
-pageurl = 'http://javpop.com/2015/12/28/tek-071.html'
-filename = 'javapop.html'
-
+urlout = 'https://www.youtube.com/'
+urlout1 = 'https://www.tumblr.com/'
+urlin = 'https://www.zhihu.com/'
+urliour = 'http://iour.co/category/jav-uncensored/'
+urliourpage = 'http://iour.co/category/jav-uncensored/page/'
 proxies = {
         'http': 'http://127.0.0.1:8087',
         'https': 'http://127.0.0.1:8087',
 }
 
-
-r = requests.get(pageurl, proxies=proxies, verify=False)
-pagefile = open(filename, 'w')
-#pagefile.write(r.text.decode('iso-8859-1').encode('utf8'))
-text = r.text
-print text
-#text.decode('')
+"""
+r = requests.get(urliour, proxies=proxies, verify=False)
+pagefile = open('iour.html', 'w')
+pagefile.write(r.text)
 """
 
 pagefile = open('iour.html', 'r')
@@ -49,4 +47,3 @@ for i in range(maxpage+1):
 
 
 
-"""
