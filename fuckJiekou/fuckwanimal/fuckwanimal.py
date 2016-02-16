@@ -4,6 +4,7 @@ import requests
 import bs4
 from bs4 import BeautifulSoup
 import os.path
+import json
 
 url = 'http://wanimal1983.tumblr.com/page/%d'
 
@@ -28,58 +29,35 @@ def downloadimg(url, filename, path):
 	return fullpath
 
 
-def fuck(pageno):
-	print 'fucking page %d'%pageno,'--------------'
-	r = requests.get(url%pageno, proxies=proxies, verify=False)
+def nomercy(pageid):
+	"""
+	简直无情api：
+	authKey : awrXoqWrcg2qeK3kbfohdSFIysTYoxa5CGBpEehwb9MxxNVGg7
+	http://api.tumblr.com/v2/blog/wanimal1983.tumblr.com/posts?api_key=awrXoqWrcg2qeK3kbfohdSFIysTYoxa5CGBpEehwb9MxxNVGg7&limit=15&offset=15
+	"""
+	url = 'http://api.tumblr.com/v2/blog/wanimal1983.tumblr.com/posts?api_key=awrXoqWrcg2qeK3kbfohdSFIysTYoxa5CGBpEehwb9MxxNVGg7&limit=15&offset=15'
+	r =requests.get(url=url, proxies=proxies, verify=False)
 	r.encoding = 'utf-8'
-	soup = BeautifulSoup(r.text, 'html.parser')
-	autopagerize_page_element = soup.find('div', class_='autopagerize_page_element')
-	#posts = autopagerize_page_element.find_all('div', class_="post")
-	#some tags are class="post xxx" so fuck those
-	fuckposts = autopagerize_page_element.children
-	posts = []
-	for fuckpost in fuckposts:
-		if isinstance(fuckpost, bs4.element.Tag):
-			posts.append(fuckpost)
-	count = 0
-	for post in posts:
-		count = count+1
-		print 'post %d'%count
-		#two types of photo shows
-		photoposts = post.find('div', class_='photo-posts')
-		media = photoposts.find('div', class_='media')
-		photosets = photoposts.find('div', class_='photo-sets')
-		if media != None:
-			print '############media'
-			img = media.find('img')['src']
-			name = media.find('img')['alt'].strip().replace(':', '')+'.jpg'
-			#name = media.find('div', class_='photoCaption').find('p').string.strip() anather method to get photo name
-			print img,'    ',name
-			downloadimg(img, name, imgpath)
-		elif photosets != None:
-			print '############photosets'
-			#photosetgrid = photosets.find('div', class_='photoset-grid')
-			imgs = photosets.find_all('img')
-			if len(imgs) > 0:
-				#get img name
-				#fuck </br> , have to like this
-				nametag = photosets.find('p')
-				basename = nametag.contents[0].strip().replace(':', '')
-				#basename = photosets.find('p').string.strip()
-				imgindex = 1
-				for img in imgs:
-					img = img['src']
-					name = basename+'_%d'%imgindex+'.jpg'
-					print img,'    ',name
-					downloadimg(img, name, imgpath)
-					imgindex = imgindex + 1
-		print '---------------------------------------'
+	
+	s = json.loads(r.text)
+	postlist = s['response']['posts']
+	for post in postlist:
+		print post['post_url']
+		postsummary = post['summary']
+		photolist = post['photos']
+		i = 0
+		for photo in photolist:
+			photourl = photo['original_size']['url']
+			print photourl
+			downloadimg(photourl, postsummary+'%d.jpg'%i, imgpath)
+			i = i+1
+		print 
+
+
 
 
 if __name__ == '__main__':
-	for i in range(13, 100):
-		fuck(i)
-	#caonimaurl = 'http://36.media.tumblr.com/2bbbda568cb211521ade5337ffea2ba7/tumblr_nxznw2OnXM1r2xjmjo1_1280.jpg'
-	#filename = 'caonima'
-	#downloadimg(caonimaurl, filename, imgpath)
+	for i in range()
+	
+
 	
